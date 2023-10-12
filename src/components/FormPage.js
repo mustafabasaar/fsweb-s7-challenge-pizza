@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import Counter from "./Counter";
 import axios from "axios";
 import * as yup from "yup";
+import "./FormPage.css";
 
 const pizzaSchema = yup.object().shape({
   boyut: yup
@@ -38,33 +39,32 @@ const pizzaSchema = yup.object().shape({
     })
     .test(
       "malzemeler",
-      "En az 3 ve en fazla 10 malzeme seçilmelidir",
-      (value) =>
-        Object.values(value).filter(Boolean).length >= 3 &&
-        Object.values(value).filter(Boolean).length <= 10
+      "En fazla 10 malzeme seçilmelidir",
+      (value) => Object.values(value).filter(Boolean).length <= 10
     ),
   notlar: yup.string(),
 });
 
 function FormPage(props) {
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [formErrors, setFormErrors] = useState({});
   const {
-    pizzaType,
     toplamFiyat,
     setToplamFiyat,
     malzemeFiyat,
     setMalzemeFiyat,
-    specialPizza,
-    setSpecialPizza,
     count,
     setCount,
+    setSiparisOzeti,
+    siparisOzeti,
+    pizzaType,
+    fiyatHesapla,
+    formErrors,
+    setFormErrors,
+    setIsDisabled,
+    isDisabled,
+    specialPizza,
+    setSpecialPizza,
     pizzaform,
-    addUser,
   } = props;
-  useEffect(() => {
-    kontrolFonksiyonu(specialPizza);
-  }, [specialPizza]);
 
   const kontrolFonksiyonuAlanlar = (name, value) => {
     yup
@@ -79,7 +79,7 @@ function FormPage(props) {
         setFormErrors(newFormErrors);
       })
       .catch((err) => {
-        // Hata varsa hata mesajını ayarla
+        console.log("hata var hataa", err.errors[0]);
         const newFormErrors = {
           ...formErrors,
           [name]: err.errors[0],
@@ -99,25 +99,7 @@ function FormPage(props) {
       }
     });
   };
-  useEffect(() => {
-    pizzaSchema
-      .validate(specialPizza)
-      .then(function (validPizza) {
-        if (validPizza === true) {
-          console.log(
-            "Axios ile sunucuya gönderilebilir buton aktif edilebilir",
-            validPizza
-          );
-          setIsDisabled(false);
-        } else {
-          console.log("hataMesajıGörüntüle");
-          setIsDisabled(true);
-        }
-      })
-      .catch(function (error) {
-        console.error("Pizza doğrulanamadı. Hatalar:", error.errors);
-      });
-  }, [specialPizza]);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === "checkbox" && name.includes("boyut")) {
@@ -131,15 +113,18 @@ function FormPage(props) {
         ...specialPizza,
         boyut: guncelBoyut,
       });
-      console.log(specialPizza);
+
       kontrolFonksiyonuAlanlar(name, specialPizza);
     } else if (type === "checkbox" && name.includes("malzemeler")) {
       const guncelMalzemeler = { ...specialPizza.malzemeler };
+
       guncelMalzemeler[value] = checked;
+      fiyatHesapla(guncelMalzemeler);
       setSpecialPizza({
         ...specialPizza,
         malzemeler: guncelMalzemeler,
       });
+
       kontrolFonksiyonuAlanlar(name, specialPizza);
     } else if (type === "select-one") {
       setSpecialPizza({
@@ -155,33 +140,32 @@ function FormPage(props) {
     }
   };
 
-  useEffect(() => {
-    fiyatHesapla(specialPizza.malzemeler);
-    console.log("data son hali", specialPizza);
-  }, [specialPizza]);
-
-  function fiyatHesapla(obj) {
-    let count = 0;
-    for (const key in obj) {
-      if (obj[key] === true) {
-        count++;
-      }
-    }
-    setMalzemeFiyat(count * 5);
-  }
-  const resetForm = () => {
-    setSpecialPizza(pizzaform);
-    setFormErrors({});
-    setIsDisabled(true);
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     if (!isDisabled) {
       axios
         .post("https://reqres.in/api/users", specialPizza)
         .then(function (response) {
-          console.log(response.data, "response");
-          addUser(response.data);
+          console.log("baba bu data gelmeli ama", response.data);
+
+          const seciliBoyut = Object.keys(response.data.boyut).filter(
+            (anahtar) => response.data.boyut[anahtar] === true
+          );
+          const seciliBoyutString = seciliBoyut.join(" ");
+
+          const seciliMalzeme = Object.keys(response.data.malzemeler).filter(
+            (anahtar) => response.data.malzemeler[anahtar] === true
+          );
+          const seciliMalzemeString = seciliMalzeme.join(", ");
+
+          let yeniSiparisOzeti = {
+            ...siparisOzeti,
+            boyut: seciliBoyutString,
+            malzemeler: seciliMalzemeString,
+            hamur: response.data.hamur,
+          };
+          setSiparisOzeti(yeniSiparisOzeti);
+          console.log("sipariş geldi koşşşş", siparisOzeti);
+
           resetForm();
         })
         .catch(function (error) {
@@ -190,259 +174,307 @@ function FormPage(props) {
         });
     }
   };
+  const resetForm = () => {
+    setSpecialPizza(pizzaform);
+    setFormErrors({});
+    setIsDisabled(true);
+  };
+  useEffect(() => {
+    fiyatHesapla(specialPizza.malzemeler);
+    kontrolFonksiyonu(specialPizza);
+  });
+
   return (
     <>
-      <header>
+      <header className="baslik-container">
         <div className="form-baslik">
-          <h1>Tekonolojik Yemekler</h1>
+          <h1>Teknolojik Yemekler</h1>
         </div>
-        <div className="form-links">
-          <NavLink to="/">Anasayfa-</NavLink>
-          <NavLink to="/">Seçenekler-</NavLink>
-          <NavLink to="/Formpage">Sipariş Oluştur</NavLink>
+        <div className="header-links ">
+          <NavLink exact to="/" className="nav-link" activeClassName="active">
+            Anasayfa-
+          </NavLink>
+          <NavLink exact to="/" className="nav-link" activeClassName="active">
+            Seçenekler-
+          </NavLink>
+          <NavLink to="/Formpage" className="nav-link" activeClassName="active">
+            Sipariş Oluştur
+          </NavLink>
         </div>
       </header>
-      <div>
-        <h3>{pizzaType[0].name}</h3>
-        <p>
-          {pizzaType[0].price}₺ <span>4.9 (200)</span>{" "}
-        </p>
-
-        <p>{pizzaType[0].explanation}</p>
-      </div>
-      <div className="ilkform-container">
-        <form>
-          <div>
-            <p>Pizza Boyutu:</p>
-            <label>
-              Küçük
-              <input
-                name="boyut.kucuk"
-                value="kucuk"
-                type="checkbox"
-                checked={specialPizza.boyut.kucuk || false}
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              Orta
-              <input
-                name="boyut.orta"
-                value="orta"
-                type="checkbox"
-                checked={specialPizza.boyut.orta}
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              Büyük
-              <input
-                name="boyut.buyuk"
-                value="buyuk"
-                type="checkbox"
-                checked={specialPizza.boyut.buyuk}
-                onChange={handleChange}
-              />
-            </label>
-            {formErrors["boyut"] && (
-              <p className="error-text">{formErrors["boyut"]}</p>
-            )}
-          </div>
-          <div>
-            <label>
-              Hamur Kalınlığı:
-              <select
-                name="hamur"
-                value={specialPizza.hamur}
-                onChange={handleChange}
-              >
-                <option value="">Seçiniz</option>
-                <option value="ince">İnce Hamur</option>
-                <option value="normal">Normal Hamur</option>
-                <option value="kalin">Kalın Hamur</option>
-              </select>
-              {formErrors["hamur"] && (
-                <p className="error-text">{formErrors["hamur"]}</p>
-              )}
-            </label>
-            <div>
-              <label>
-                Peperroni
-                <input
-                  name="malzemeler.peperroni"
-                  value="peperroni"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.peperroni || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Domates
-                <input
-                  name="malzemeler.domates"
-                  value="domates"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.domates || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Biber
-                <input
-                  name="malzemeler.biber"
-                  value="biber"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.biber || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Sosis
-                <input
-                  name="malzemeler.sosis"
-                  value="sosis"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.sosis || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                misir
-                <input
-                  name="malzemeler.misir"
-                  value="misir"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.misir || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Sucuk
-                <input
-                  name="malzemeler.sucuk"
-                  value="sucuk"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.sucuk || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Kanada Jambonu
-                <input
-                  name="malzemeler.kanadajambonu"
-                  value="kanadajambonu"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.kanadajambonu || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Cheddar
-                <input
-                  name="malzemeler.cheddar"
-                  value="cheddar"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.cheddar || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Ananas
-                <input
-                  name="malzemeler.ananas"
-                  value="ananas"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.ananas || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Tavuk Izgara
-                <input
-                  name="malzemeler.tavuk"
-                  value="tavuk"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.tavuk || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Jalepano
-                <input
-                  name="malzemeler.jalepano"
-                  value="jalepano"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.jalepano || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Kabak
-                <input
-                  name="malzemeler.kabak"
-                  value="kabak"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.kabak || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Soğan
-                <input
-                  name="malzemeler.sogan"
-                  value="sogan"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.sogan || false}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Sarımsak
-                <input
-                  name="malzemeler.sarimsak"
-                  value="sarimsak"
-                  type="checkbox"
-                  checked={specialPizza.malzemeler.sarimsak || false}
-                  onChange={handleChange}
-                />
-              </label>
-              {formErrors["malzemeler"] && (
-                <p className="error-text">{formErrors["malzemeler"]}</p>
-              )}
-            </div>
-          </div>
-          <div>
-            <label htmlFor="notlar">Sipariş Notu:</label>
-            <input
-              value={specialPizza.notlar}
-              placeholder="Siparişine eklemek istediğin bir not var mı ?"
-              onChange={handleChange}
-              type="text"
-              id="notlar"
-              name="malzemeler.notlarr"
-            />
-            {formErrors["notlar"] && (
-              <p className="error-text">{formErrors["notlar"]}</p>
-            )}
-          </div>
-        </form>
-        <Counter
-          toplamFiyat={toplamFiyat}
-          setToplamFiyat={setToplamFiyat}
-          malzemeFiyat={malzemeFiyat}
-          setMalzemeFiyat={setMalzemeFiyat}
-          count={count}
-          setCount={setCount}
-          pizzaType={pizzaType}
-        />
-        <div>
-          <h3>Sipariş Toplamı</h3>
-          <h4>Seçimler {malzemeFiyat * count}₺ </h4>
-          <h4>Toplam {(toplamFiyat + malzemeFiyat) * count}₺</h4>
+      <div className="form-container">
+        <h3 className="pizza-name">{pizzaType[0].name}</h3>
+        <div className="pizza-area">
+          <h2 className="pizza-price">{pizzaType[0].price}₺</h2>
+          <p id="dort-dokuz">4.9</p>
+          <p id="ikiyuz">(200)</p>
         </div>
-        <button onClick={handleSubmit} type="submit" disabled={isDisabled}>
-          Sipariş Ver
-        </button>
+        <p className="pizza-explanation">{pizzaType[0].explanation}</p>
+
+        <div className="ilkform-container">
+          <form className="all-form">
+            <div className="boyut-hamur">
+              <div className="boyut-hamur_child">
+                <h4>
+                  Boyut Seç<span id="zorunluyildiz">*</span>
+                </h4>
+                <label className="checkbox-container">
+                  Küçük
+                  <input
+                    name="boyut.kucuk"
+                    value="kucuk"
+                    type="checkbox"
+                    checked={specialPizza.boyut.kucuk}
+                    onChange={handleChange}
+                  />
+                  <span className="checkmark"></span>
+                </label>
+                <label className="checkbox-container">
+                  Orta
+                  <input
+                    name="boyut.orta"
+                    value="orta"
+                    type="checkbox"
+                    checked={specialPizza.boyut.orta}
+                    onChange={handleChange}
+                  />
+                  <span className="checkmark"></span>
+                </label>
+
+                <label className="checkbox-container">
+                  Büyük
+                  <input
+                    name="boyut.buyuk"
+                    value="buyuk"
+                    type="checkbox"
+                    checked={specialPizza.boyut.buyuk}
+                    onChange={handleChange}
+                  />
+                  <span className="checkmark"></span>
+                </label>
+              </div>
+              <label>
+                <h4>
+                  Hamur Seç<span id="zorunluyildiz">*</span>
+                </h4>
+                <select
+                  name="hamur"
+                  value={specialPizza.hamur}
+                  onChange={handleChange}
+                >
+                  <option value="">Hamur Kalınlığı</option>
+                  <option value="ince">İnce Hamur</option>
+                  <option value="normal">Normal Hamur</option>
+                  <option value="kalin">Kalın Hamur</option>
+                </select>
+              </label>
+            </div>
+            <div>
+              <h2>Ek Malzemeler</h2>
+              <p id="kisit">En fazla 10 malzeme seçebilirsiniz.5₺ </p>
+              <div className="malzemeler-container">
+                <div className="malzemeblock-bir">
+                  <label>
+                    <input
+                      name="malzemeler.peperroni"
+                      value="peperroni"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.peperroni}
+                      onChange={handleChange}
+                    />
+                    Peperroni
+                  </label>
+                  <label>
+                    <input
+                      name="malzemeler.domates"
+                      value="domates"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.domates}
+                      onChange={handleChange}
+                    />
+                    Domates
+                  </label>
+                  <label>
+                    <input
+                      name="malzemeler.biber"
+                      value="biber"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.biber}
+                      onChange={handleChange}
+                    />
+                    Biber
+                  </label>
+                  <label>
+                    <input
+                      name="malzemeler.sosis"
+                      value="sosis"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.sosis}
+                      onChange={handleChange}
+                    />
+                    Sosis
+                  </label>
+                  <label>
+                    <input
+                      name="malzemeler.misir"
+                      value="misir"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.misir}
+                      onChange={handleChange}
+                    />
+                    Mısır
+                  </label>
+                </div>
+                <div className="malzemeblock-iki">
+                  <label>
+                    <input
+                      name="malzemeler.sucuk"
+                      value="sucuk"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.sucuk}
+                      onChange={handleChange}
+                    />
+                    Sucuk
+                  </label>
+                  <label>
+                    <input
+                      name="malzemeler.jalepano"
+                      value="jalepano"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.jalepano}
+                      onChange={handleChange}
+                    />
+                    Jalepano
+                  </label>
+                  <label>
+                    <input
+                      name="malzemeler.cheddar"
+                      value="cheddar"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.cheddar}
+                      onChange={handleChange}
+                    />{" "}
+                    Cheddar
+                  </label>
+                  <label>
+                    <input
+                      name="malzemeler.ananas"
+                      value="ananas"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.ananas}
+                      onChange={handleChange}
+                    />
+                    Ananas
+                  </label>
+                  <label>
+                    <input
+                      name="malzemeler.tavuk"
+                      value="tavuk"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.tavuk}
+                      onChange={handleChange}
+                    />
+                    Tavuk Izgara
+                  </label>
+                </div>
+                <div className="malzemeblock-uc">
+                  <label>
+                    <input
+                      name="malzemeler.kabak"
+                      value="kabak"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.kabak}
+                      onChange={handleChange}
+                    />{" "}
+                    Kabak
+                  </label>
+                  <label>
+                    <input
+                      name="malzemeler.kanadajambonu"
+                      value="kanadajambonu"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.kanadajambonu}
+                      onChange={handleChange}
+                    />{" "}
+                    Kanada Jambonu
+                  </label>
+                  <label>
+                    <input
+                      name="malzemeler.sogan"
+                      value="sogan"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.sogan}
+                      onChange={handleChange}
+                    />{" "}
+                    Soğan
+                  </label>
+                  <label>
+                    <input
+                      name="malzemeler.sarimsak"
+                      value="sarimsak"
+                      type="checkbox"
+                      checked={specialPizza.malzemeler.sarimsak}
+                      onChange={handleChange}
+                    />
+                    Sarımsak
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label htmlFor="notlar"></label>
+              <h2>Sipariş Notu</h2>
+              <input
+                value={specialPizza.notlar}
+                placeholder="Siparişine eklemek istediğin bir not var mı ?"
+                onChange={handleChange}
+                type="text"
+                id="notlar"
+                name="malzemeler.notlarr"
+                autoFocus
+              />
+            </div>
+          </form>
+          <div className="duz-cizgi"></div>
+          <div className="siparisverme-alanı">
+            <Counter
+              toplamFiyat={toplamFiyat}
+              setToplamFiyat={setToplamFiyat}
+              malzemeFiyat={malzemeFiyat}
+              setMalzemeFiyat={setMalzemeFiyat}
+              count={count}
+              setCount={setCount}
+              pizzaType={pizzaType}
+            />
+            <div className="hesap-alanı">
+              <h2>Sipariş Toplamı</h2>
+              <h3>
+                Seçimler <span id="fiyatlar">{malzemeFiyat * count}₺ </span>
+              </h3>
+              <h4>
+                Toplam{" "}
+                <span id="fiyatlar">
+                  {(toplamFiyat + malzemeFiyat) * count}₺
+                </span>
+              </h4>
+              <NavLink to="/SiparisOZeti">
+                <button
+                  className={
+                    isDisabled
+                      ? "renkli-dugme is-disabled"
+                      : "renkli-dugme is-enabled"
+                  }
+                  onClick={handleSubmit}
+                  type="button"
+                  disabled={isDisabled}
+                >
+                  Sipariş Ver
+                </button>
+              </NavLink>
+            </div>
+            <p className="bosluk-bırak"></p>
+          </div>
+        </div>
       </div>
     </>
   );

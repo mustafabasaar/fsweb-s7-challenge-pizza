@@ -1,0 +1,254 @@
+/* Başlık alanı */
+.baslik-container{
+ width:100% ; 
+ height: 10rem; 
+ border:0px, 0px, 1px, 0px ;
+ background-color:#CE2829;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ 
+}
+.form-baslik{
+    color: white;
+    font-size: 18px;
+    font-family: 'Londrina Solid';
+    margin-bottom: 10px;
+    margin-top:1%
+}
+.nav-link{
+    color: rgb(215, 211, 211);
+    text-decoration: none;
+    font-family: 'Quattrocento', serif;
+}
+.nav-link.active{
+    color: white;
+}
+
+.header-links{
+width: 33.5%;
+}
+
+/* Form Alanı */
+.form-container{
+    display: flex;
+    flex-direction: column;
+   align-items: center;
+   display: inline-block;
+   height: 100%;
+   padding-left: 33.6%;
+   padding-right:33.6%;
+}
+.pizza-name{
+    font-family:'Barlow', sans-serif;
+    color: rgb(33, 32, 32);
+    font-weight: 600;
+    
+}
+.pizza-price{
+    
+    font-family: 'Londrina Solid';
+    font-weight: 400;
+}
+.pizza-area{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+#dort-dokuz{
+    color: rgb(160, 156, 156);
+    margin-left: 9rem;
+}
+#ikiyuz{
+    color: rgb(160, 156, 156);
+}
+.pizza-explanation{
+    color: rgb(123, 119, 119);
+    font-family:'Barlow', sans-serif;
+    line-height: 28.8px;
+    font-size: 16px;
+}
+#zorunluyildiz{
+    color: #CE2829;
+}
+.boyut-hamur{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+   
+    
+}
+.boyut-hamur_child{
+    display: flex;
+    flex-direction: column;
+    
+}
+.all-form{
+  font-family:'Barlow', sans-serif;
+}
+/* .boyut-hamur_child label{
+     color: rgb(123, 119, 119);
+     border-radius: 100%;
+} */
+.checkbox-container {
+  display: block;
+  position: relative;
+  padding-left: 25px; 
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  color: rgb(123, 119, 119); ;
+}
+
+/* Checkbox stil */
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Yuvarlak işaret */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 12px;
+  width: 12px;
+  border: 2px solid #000;;
+  border-radius: 50%; /* Yuvarlak şekil */
+}
+
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #080908;
+  width:10px;
+  height: 10px;
+  border-radius: 50%;
+}
+h4{
+   font-size: larger;  
+}
+
+.malzemeler-container{
+    display: flex;
+    flex-direction: row;
+    font-family:'Barlow', sans-serif;
+    font-weight: bolder;
+    font-size: larger;
+    justify-content: space-between;
+    color: rgb(59, 57, 57);
+
+}
+.malzemeblock-bir{
+    display: flex;
+    flex-direction: column;
+    gap:1rem;
+}
+.malzemeblock-iki{
+    display: flex;
+    flex-direction: column;
+    gap:1rem;
+}
+.malzemeblock-uc{
+    display: flex;
+    flex-direction: column;
+    gap:1rem;
+}
+#kisit{color: rgb(113, 110, 110); }
+#notlar{
+    width: 98%;
+   height: 3rem;
+  
+    overflow: auto;
+   border-radius: 10%;
+  border-color: rgb(113, 110, 110);
+}
+.duz-cizgi{
+    margin-top: 2.5rem;
+    border: 1px solid #5F5F5F80
+}
+/* Sipariş Verme Alanı */
+.siparisverme-alanı{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.hesap-alanı{
+    border: 2px solid #D9D9D9;
+    margin-top:3rem;
+    width: 68%;
+    height: 16.5rem;
+    display: flex;
+    flex-direction: column;
+    margin-left: 3rem;
+  
+}
+#fiyatlar{
+  position: absolute;
+    margin-left: 7rem;
+    
+}
+.renklı-dugme{
+    width: 101%;
+    height: 3rem;
+    background-color: #4f4f4e;
+    color: #080908;
+    font-size: large;
+    font-family:'Barlow', sans-serif;
+}
+.is-disabled {
+    background-color: red; /* Eğer isDisabled true ise, arka plan rengi kırmızı olsun */
+    width: 101%;
+    height: 3rem;
+    background-color: #4f4f4e;
+    color: #dd0d0d;
+    font-size: large;
+    font-family:'Barlow', sans-serif;
+}
+
+
+.is-enabled {
+    width: 101%;
+    height: 3rem;
+    background-color:#FDC913;
+    color: #080908;
+    font-size: large;
+    font-family:'Barlow', sans-serif;}
+
+
+
+
+
+
+
+.hesap-alanı h2{
+    margin-left: 5%;
+    padding-top:1rem ;
+    padding-left: 2rem;
+    font-family:'Barlow', sans-serif;
+}
+.hesap-alanı h3{
+    margin-left: 5%;
+    color: #8d8b8b;
+    padding-left: 2rem;
+    font-family:'Barlow', sans-serif;
+}
+.hesap-alanı h4{
+    margin-left: 5%;
+    color: #CE2829;
+    padding-left: 2rem;
+    font-family:'Barlow', sans-serif;
+    
+}
+.bosluk-bırak{
+    max-width: 100%;
+    height: 5rem;
+    border: 2px;
+    background-color: #CE2829;
+    margin-top: 20rem;
+
+}

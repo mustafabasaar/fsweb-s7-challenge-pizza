@@ -1,0 +1,27 @@
+.counter-container{
+    display: flex;
+    flex-direction:row ;
+    margin-top: 2rem;
+}
+.counter-container button{
+    margin-top: 1rem;
+    background-color:#FDC913;
+    width: 3rem;
+    border-radius: 15%;
+    max-height: 3rem;
+}
+.counter-display{
+    width: 3rem;
+    height: 2.7rem;
+    border-radius: 10%;
+    border: 1px solid rgb(168, 166, 166);
+    text-align: center;
+    font-size: large;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1.5rem;
+   
+    
+
+}

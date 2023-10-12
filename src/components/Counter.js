@@ -1,4 +1,5 @@
 import React from "react";
+import "./Counter.css";
 
 function Counter(props) {
   const { count, setCount } = props;
@@ -14,11 +15,11 @@ function Counter(props) {
   };
 
   return (
-    <div>
-      <h1>{count}</h1>
-      <button onClick={handleIncrement}>Artır (+)</button>
+    <div className="counter-container">
+      <button onClick={handleIncrement}> +</button>
+      <p className="counter-display">{count}</p>
       <button onClick={handleDecrement} disabled={count === 1}>
-        Azalt (-)
+        -
       </button>
     </div>
   );

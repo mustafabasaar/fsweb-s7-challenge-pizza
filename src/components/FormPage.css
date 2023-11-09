@@ -14,7 +14,8 @@
     font-size: 18px;
     font-family: 'Londrina Solid';
     margin-bottom: 10px;
-    margin-top:1%
+    margin-top: 1%;
+  
 }
 .nav-link{
     color: rgb(215, 211, 211);
@@ -167,10 +168,7 @@ h4{
    border-radius: 10%;
   border-color: rgb(113, 110, 110);
 }
-.duz-cizgi{
-    margin-top: 2.5rem;
-    border: 1px solid #5F5F5F80
-}
+
 /* Sipariş Verme Alanı */
 .siparisverme-alanı{
     display: flex;

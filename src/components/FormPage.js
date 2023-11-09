@@ -119,7 +119,7 @@ function FormPage(props) {
       const guncelMalzemeler = { ...specialPizza.malzemeler };
 
       guncelMalzemeler[value] = checked;
-      fiyatHesapla(guncelMalzemeler);
+
       setSpecialPizza({
         ...specialPizza,
         malzemeler: guncelMalzemeler,
@@ -240,7 +240,6 @@ function FormPage(props) {
                   />
                   <span className="checkmark"></span>
                 </label>
-
                 <label className="checkbox-container">
                   Büyük
                   <input
@@ -430,7 +429,7 @@ function FormPage(props) {
                 onChange={handleChange}
                 type="text"
                 id="notlar"
-                name="malzemeler.notlarr"
+                name="notlar"
                 autoFocus
               />
             </div>

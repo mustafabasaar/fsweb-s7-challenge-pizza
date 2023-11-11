@@ -14,14 +14,15 @@ const initialForm = [
       "Frontend Dev olarak hala position:absolute kullanıyorsan bu çok acı pizza tam sana göre. Pizza, domates, peynir ve genellikle çeşitli diğer malzemelerle kaplanmış, daha sonra geleneksel olarak odun ateşinde bir fırında yüksek sıcaklıkta pişirilen, genellikle yuvarlak, düzleştirilmiş mayalı buğday bazlı hamurdan oluşan İtalyan kökenli lezzetli bir yemektir. Küçük bir pizzaya bazen pizatta denir.",
   },
 ];
-const siparisOzetiForm = {
-  name: initialForm[0].name,
-  boyut: "",
-  malzemeler: "",
-  hamur: "",
-};
 
 const App = () => {
+  const siparisOzetiForm = {
+    name: initialForm[0].name,
+    boyut: "",
+    malzemeler: "",
+    hamur: "",
+    notlar: "",
+  };
   const [malzemeFiyat, setMalzemeFiyat] = useState(0);
   const [pizzaType, setPizzaType] = useState(initialForm);
   const [toplamFiyat, setToplamFiyat] = useState(initialForm[0].price);

@@ -155,6 +155,7 @@ function FormPage(props) {
             boyut: seciliBoyutString,
             malzemeler: seciliMalzemeString,
             hamur: response.data.hamur,
+            notlar: response.data.notlar,
           };
           setSiparisOzeti(yeniSiparisOzeti);
           console.log("sipariş geldi koşşşş", siparisOzeti);

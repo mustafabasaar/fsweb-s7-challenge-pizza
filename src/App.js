@@ -1,33 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import HomePage from "./components/HomePage";
 import Formpage from "./components/FormPage";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { Switch } from "react-router-dom/cjs/react-router-dom.min";
 import { useState } from "react";
-import axios from "axios";
 import SiparisOzeti from "./components/SiparisOzeti";
-import { useHistory } from "react-router-dom";
-const pizzaform = {
-  boyut: { kucuk: false, orta: false, buyuk: false },
-  hamur: "",
-  malzemeler: {
-    peperroni: false,
-    domates: false,
-    biber: false,
-    sosis: false,
-    misir: false,
-    sucuk: false,
-    kanadajambonu: false,
-    ananas: false,
-    cheddar: false,
-    jalepano: false,
-    kabak: false,
-    tavuk: false,
-    sogan: false,
-    sarimsak: false,
-  },
-  notlar: "",
-};
 
 const initialForm = [
   {
@@ -50,7 +27,7 @@ const App = () => {
   const [toplamFiyat, setToplamFiyat] = useState(initialForm[0].price);
   const [count, setCount] = useState(1);
   const [siparisOzeti, setSiparisOzeti] = useState(siparisOzetiForm);
-  const [specialPizza, setSpecialPizza] = useState(pizzaform);
+
   const [isDisabled, setIsDisabled] = useState(true);
   const [formErrors, setFormErrors] = useState({});
 
@@ -90,8 +67,6 @@ const App = () => {
                     siparisOzeti={siparisOzeti}
                     setSiparisOzeti={setSiparisOzeti}
                     fiyatHesapla={fiyatHesapla}
-                    specialPizza={specialPizza}
-                    setSpecialPizza={setSpecialPizza}
                     isDisabled={isDisabled}
                     setIsDisabled={setIsDisabled}
                     formErrors={formErrors}
@@ -110,6 +85,7 @@ const App = () => {
                     count={count}
                     toplamFiyat={toplamFiyat}
                     malzemeFiyat={malzemeFiyat}
+                    setPizzaType={setPizzaType}
                   />
                 </>
               )}

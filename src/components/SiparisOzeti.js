@@ -1,4 +1,3 @@
-import reactRouterDom from "react-router-dom";
 import React from "react";
 import "./SiparisOzeti.css";
 function SiparisOzeti(props) {

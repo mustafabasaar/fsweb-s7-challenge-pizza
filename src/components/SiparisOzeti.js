@@ -1,4 +1,3 @@
-import reactRouterDom from "react-router-dom";
 import React from "react";
 import "./SiparisOzeti.css";
 function SiparisOzeti(props) {
@@ -19,9 +18,11 @@ function SiparisOzeti(props) {
             <h4>{pizzaType[0].name}</h4>
           </div>
           <div>
+            <p>Adet:{count}</p>
             <p>Boyut:{siparisOzeti.boyut}</p>
             <p>Hamur:{siparisOzeti.hamur}</p>
             <p>Ek malzemeler:{siparisOzeti.malzemeler}</p>
+            <p>Notlar:{siparisOzeti.notlar}</p>
           </div>
           <div className="toplamfiyat-sonuc">
             <h3>Sipariş Toplamı</h3>

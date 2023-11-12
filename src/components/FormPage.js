@@ -1,9 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Counter from "./Counter";
 import axios from "axios";
 import * as yup from "yup";
 import "./FormPage.css";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  changeBoyut,
+  changeMalzemeler,
+  changeNotlar,
+  changeHamur,
+} from "../store/actions/pizzaFormAction";
 
 const pizzaSchema = yup.object().shape({
   boyut: yup
@@ -61,11 +68,9 @@ function FormPage(props) {
     setFormErrors,
     setIsDisabled,
     isDisabled,
-    specialPizza,
-    setSpecialPizza,
-    pizzaform,
   } = props;
-
+  const specialPizza = useSelector((store) => store.pizzaForm);
+  const dispatch = useDispatch();
   const kontrolFonksiyonuAlanlar = (name, value) => {
     yup
       .reach(pizzaSchema, name)
@@ -109,10 +114,7 @@ function FormPage(props) {
         guncelBoyut[key] = false;
       }
       guncelBoyut[value] = checked;
-      setSpecialPizza({
-        ...specialPizza,
-        boyut: guncelBoyut,
-      });
+      dispatch(changeBoyut(guncelBoyut));
 
       kontrolFonksiyonuAlanlar(name, specialPizza);
     } else if (type === "checkbox" && name.includes("malzemeler")) {
@@ -120,23 +122,14 @@ function FormPage(props) {
 
       guncelMalzemeler[value] = checked;
 
-      setSpecialPizza({
-        ...specialPizza,
-        malzemeler: guncelMalzemeler,
-      });
+      dispatch(changeMalzemeler(guncelMalzemeler));
 
       kontrolFonksiyonuAlanlar(name, specialPizza);
     } else if (type === "select-one") {
-      setSpecialPizza({
-        ...specialPizza,
-        hamur: value,
-      });
+      dispatch(changeHamur(value));
       kontrolFonksiyonuAlanlar(name, specialPizza);
     } else if (type === "text") {
-      setSpecialPizza({
-        ...specialPizza,
-        notlar: value,
-      });
+      dispatch(changeNotlar(value));
     }
   };
 
@@ -162,6 +155,7 @@ function FormPage(props) {
             boyut: seciliBoyutString,
             malzemeler: seciliMalzemeString,
             hamur: response.data.hamur,
+            notlar: response.data.notlar,
           };
           setSiparisOzeti(yeniSiparisOzeti);
           console.log("sipariş geldi koşşşş", siparisOzeti);
@@ -175,7 +169,6 @@ function FormPage(props) {
     }
   };
   const resetForm = () => {
-    setSpecialPizza(pizzaform);
     setFormErrors({});
     setIsDisabled(true);
   };
@@ -430,7 +423,6 @@ function FormPage(props) {
                 type="text"
                 id="notlar"
                 name="notlar"
-                autoFocus
               />
             </div>
           </form>
